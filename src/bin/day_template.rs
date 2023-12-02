@@ -55,7 +55,6 @@ B";
     #[test]
     fn problem2() {
         let answer = problem2_solution(&load_test_data());
-
         assert_eq!(answer, 3);
     }
 }
