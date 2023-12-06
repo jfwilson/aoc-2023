@@ -1,7 +1,8 @@
+use anyhow::{anyhow, Result};
 use itertools::Itertools;
 use std::{
     fs::File,
-    io::{BufRead, BufReader, Result},
+    io::{BufRead, BufReader, Error},
     path::Path,
 };
 
@@ -11,24 +12,24 @@ fn main() -> Result<()> {
     let input_file = File::open(Path::new(INPUT_FILE))?;
     let lines: Vec<String> = BufReader::new(input_file)
         .lines()
-        .collect::<Result<Vec<String>>>()?;
+        .collect::<Result<Vec<String>, Error>>()?;
 
-    println!("problem1 = {}", problem1_solution(&lines));
-    println!("problem2 = {}", problem2_solution(&lines));
+    println!("problem1 = {}", problem1_solution(&lines)?);
+    println!("problem2 = {}", problem2_solution(&lines)?);
     Ok(())
 }
 
-fn problem1_solution(input: &Vec<String>) -> usize {
-    input.into_iter().dedup().count()
+fn problem1_solution(input: &Vec<String>) -> Result<usize> {
+    Ok(input.into_iter().dedup().count())
 }
 
-fn problem2_solution(input: &Vec<String>) -> usize {
+fn problem2_solution(input: &Vec<String>) -> Result<usize> {
     input
         .into_iter()
         .dedup_with_count()
         .map(|tuple| tuple.0)
         .max()
-        .unwrap()
+        .ok_or(anyhow!("max of empty input"))
 }
 
 #[cfg(test)]
@@ -48,13 +49,13 @@ B";
 
     #[test]
     fn problem1() {
-        let answer = problem1_solution(&load_test_data());
+        let answer = problem1_solution(&load_test_data()).unwrap();
         assert_eq!(answer, 2);
     }
 
     #[test]
     fn problem2() {
-        let answer = problem2_solution(&load_test_data());
+        let answer = problem2_solution(&load_test_data()).unwrap();
         assert_eq!(answer, 3);
     }
 }
