@@ -1,5 +1,4 @@
 use anyhow::Result;
-use regex::Regex;
 use std::{
     fs::File,
     io::{BufRead, BufReader, Error},
@@ -20,9 +19,14 @@ fn main() -> Result<()> {
 }
 
 fn problem1_solution(input: &Vec<String>) -> Result<usize> {
-    let re = Regex::new(r"\d+").unwrap();
-    let times = re.find_iter(&input[0]).map(|n| n.as_str().parse::<usize>());
-    let dists = re.find_iter(&input[1]).map(|n| n.as_str().parse::<usize>());
+    let times = input[0]
+        .split_whitespace()
+        .skip(1)
+        .map(|n| n.parse::<usize>());
+    let dists = input[1]
+        .split_whitespace()
+        .skip(1)
+        .map(|n| n.parse::<usize>());
     times
         .zip(dists)
         .map(|(t, d)| Ok(count_winners(t?, d?)))
@@ -30,15 +34,14 @@ fn problem1_solution(input: &Vec<String>) -> Result<usize> {
 }
 
 fn problem2_solution(input: &Vec<String>) -> Result<usize> {
-    let re = Regex::new(r"\d+").unwrap();
-    let time = re
-        .find_iter(&input[0])
-        .flat_map(|n| n.as_str().chars())
+    let time = input[0]
+        .chars()
+        .filter(|c| c.is_digit(10))
         .collect::<String>()
         .parse::<usize>()?;
-    let dist = re
-        .find_iter(&input[1])
-        .flat_map(|n| n.as_str().chars())
+    let dist = input[1]
+        .chars()
+        .filter(|c| c.is_digit(10))
         .collect::<String>()
         .parse::<usize>()?;
     Ok(count_winners(time, dist))
